@@ -95,10 +95,10 @@ impl<F, R, S, T> Clone for RawTask<F, R, S, T> {
 
 impl<F, R, S, T> RawTask<F, R, S, T>
 where
-    F: Future<Output = R> + Send + 'static,
-    R: Send + 'static,
-    S: Fn(Task<T>) + Send + Sync + 'static,
-    T: Send + 'static,
+    F: Future<Output = R> + 'static,
+    R: 'static,
+    S: Fn(Task<T>) + 'static,
+    T: 'static,
 {
     /// Allocates a task with the given `future` and `schedule` function.
     ///
@@ -592,17 +592,17 @@ where
         /// A guard that closes the task if polling its future panics.
         struct Guard<F, R, S, T>(RawTask<F, R, S, T>)
         where
-            F: Future<Output = R> + Send + 'static,
-            R: Send + 'static,
-            S: Fn(Task<T>) + Send + Sync + 'static,
-            T: Send + 'static;
+            F: Future<Output = R> + 'static,
+            R: 'static,
+            S: Fn(Task<T>) + 'static,
+            T: 'static;
 
         impl<F, R, S, T> Drop for Guard<F, R, S, T>
         where
-            F: Future<Output = R> + Send + 'static,
-            R: Send + 'static,
-            S: Fn(Task<T>) + Send + Sync + 'static,
-            T: Send + 'static,
+            F: Future<Output = R> + 'static,
+            R: 'static,
+            S: Fn(Task<T>) + 'static,
+            T: 'static,
         {
             fn drop(&mut self) {
                 let raw = self.0;

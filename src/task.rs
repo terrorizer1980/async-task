@@ -38,10 +38,10 @@ use crate::JoinHandle;
 /// ```
 pub fn spawn<F, R, S, T>(future: F, schedule: S, tag: T) -> (Task<T>, JoinHandle<R, T>)
 where
-    F: Future<Output = R> + Send + 'static,
-    R: Send + 'static,
-    S: Fn(Task<T>) + Send + Sync + 'static,
-    T: Send + Sync + 'static,
+    F: Future<Output = R> + 'static,
+    R: 'static,
+    S: Fn(Task<T>) + 'static,
+    T: 'static,
 {
     let raw_task = RawTask::<F, R, S, T>::allocate(tag, future, schedule);
     let task = Task {
@@ -83,8 +83,7 @@ pub struct Task<T> {
     pub(crate) _marker: PhantomData<T>,
 }
 
-unsafe impl<T> Send for Task<T> {}
-unsafe impl<T> Sync for Task<T> {}
+// unsafe impl<T> Sync for Task<T> {}
 
 impl<T> Task<T> {
     /// Schedules the task.
